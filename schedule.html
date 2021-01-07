@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>  
+    <meta charset="utf-8">
+    <title>CHI 2020 Schedule</title> 
+    <link rel="stylesheet" href="styles.css"> 
+</head>
+ <body>
+      <div class="container"> 
+         
+     <header>
+         <img src="logo.png" >
+         <h1>2020 ACM Conference on Human Factors in Computing Systems &#40;CHI'20&#41; Schedule</h1>     
+     </header>  
+  
+        
+  
+          
+<!--  select date dropdown menu   -->
+ <div id="dateselector"></div>  
+          
+<!--  select time dropdown menu   -->         
+ <div id="timeselector"></div>  
+          
+<!--  submit button   -->        
+<div id="submitbutton"><button class="submitbutton" type="button" onclick="clickSubmit(); showRadioButtons()">Submit</button></div> 
+               
+          
+<!--  radio buttons - paper sessions only/ non paper sessions only/ all sessions   -->                 
+ <div id="radiobuttons"></div>   
+  
+          
+<!--  displays relevant day and sessions   -->                    
+ <div id="fullday"></div>       
+        
+          
+          
+          
+          
+   
+<script>
+
+     
+    
+var xmlhttp = new XMLHttpRequest();
+var url = "scheduling.json";
+
+xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        parsedJSON = JSON.parse(xmlhttp.responseText);
+        selectDate(parsedJSON);
+        selectTime(parsedJSON);
+    }
+};
+
+xmlhttp.open("GET", url, true);
+xmlhttp.send();
+
+
+    
+    
+    
+/*    function to display and select days from dropdown menu    */   
+    
+function selectDate(obj) {
+    var conferencedates = parsedJSON;
+    var result = "<label for='dates'>Select a date: </label>" +
+        "<select name='datelist' id='selected_date' onchange='selectTime()'>" +
+        "<option value='' disabled selected>select date</option><br>";
+            
+    for (var i=0; i <conferencedates.length; i++){
+        result += "<option value=" + conferencedates[i].date +">" + conferencedates[i].day + " " + conferencedates[i].date + "</option><br>"; 
+    }
+        result += "</select>";
+    document.getElementById("dateselector").innerHTML = result;
+} 
+    
+  
+    
+    
+    
+    
+/*    function to display and select time slots from dropdown menu    */       
+    
+function selectTime(obj) {
+    var conferencedates = parsedJSON;
+    var chosenDate = document.getElementById('selected_date').value;
+    
+    var result = "<label for='times'>Select a time: </label>" +
+        "<select name='timelist' id='selected_time'>" +
+        "<option value='' disabled selected>select time</option><br>";
+            
+    for (var i=0; i <conferencedates.length; i++){ 
+            if (chosenDate === conferencedates[i].date) {
+            var slotKeys = Object.keys(conferencedates[i].slots);
+            for (var j = 0; j < slotKeys.length; j++) {
+                var sessionKeys = Object.keys(conferencedates[i].slots[slotKeys[j]].sessions);
+                if (sessionKeys.length === 0) {
+                ;}
+                else {
+                result += "<option value=" + conferencedates[i].slots[slotKeys[j]].startTime + ">" + conferencedates[i].slots[slotKeys[j]].time + "</option><br>";
+        } }
+    }
+ }
+    result += "</select>";
+    document.getElementById("timeselector").innerHTML = result; 
+}
+ 
+    
+    
+    
+    
+    
+/*    function to display day and sessions based on values from dropdown menus    */       
+    
+function clickSubmit(obj) {
+       var conferencedates = parsedJSON;
+       var chosenDate = document.getElementById('selected_date').value;
+       var chosenTime = document.getElementById('selected_time').value;
+       
+       var result = ''
+       for (var i=0; i <conferencedates.length; i++){ 
+            if (chosenDate === conferencedates[i].date && chosenTime === ''){
+                    result +="<h2>" + conferencedates[i].day + " " + conferencedates[i].date + "</h2>";
+                    var slotKeys = Object.keys(conferencedates[i].slots);
+                    for (var j = 0; j < slotKeys.length; j++) {
+                        var sessionKeys = Object.keys(conferencedates[i].slots[slotKeys[j]].sessions);
+                        if (sessionKeys.length === 0) {
+                        ;}
+                        else {
+                        result +="<h3>Time Slot: " + conferencedates[i].slots[slotKeys[j]].time + "</h3>";    
+                        for(var k = 0; k < sessionKeys.length; k++){     
+                                result += "<div class=" + conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].type + "><h4>Title: " + conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].title + "</h4>";
+                                result += "<p>Start Time: " +  conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].time + "</p>";  
+                                result += "<p>Location: " +  conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].room + "</p>"; 
+                                result += "<p>Type: " +  conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].type + "</p>";
+                                if (conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].type === 'break' || conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].type === 'keynote') {
+                                    ; }
+                                else {
+                                        var submissionKeys = Object.keys(conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].submissions);
+                                        result += "<details><summary>More info</summary>";
+                                        for(var l = 0; l < submissionKeys.length; l++){
+                                            result += "<div class='submissions'><p>Submission Title:" + conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].submissions[submissionKeys[l]].title + "</p>";
+                                            result += "<p><a href =" + conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].submissions[submissionKeys[l]].doiUrl + " target='_blank'>" + conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].submissions[submissionKeys[l]].doiUrl + "</a><p/><br></div>";
+                                        } 
+                                    result += "</details></div></div>";
+                                        }
+                                     }
+                             }   }
+                        
+            }else if (chosenDate === conferencedates[i].date){
+                    result +="<h2>" + conferencedates[i].day + " " + conferencedates[i].date + "</h2>";
+                    var slotKeys = Object.keys(conferencedates[i].slots);
+                    for (var j = 0; j < slotKeys.length; j++) {
+                        if (chosenTime === conferencedates[i].slots[slotKeys[j]].startTime){
+                            var sessionKeys = Object.keys(conferencedates[i].slots[slotKeys[j]].sessions);
+                            if (sessionKeys.length === 0) {
+                            ;}
+                            else {
+                            result +="<h3>Time Slot: " + conferencedates[i].slots[slotKeys[j]].time + "</h3>";    
+                            for(var k = 0; k < sessionKeys.length; k++){
+                                result += "<div class=" + conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].type + "><h4> Session Title: " +  conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].title + "</h4>";   
+                                result += "<p>Start Time: " +  conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].time + "</p>";  
+                                result += "<p>Location: " +  conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].room + "</p>"; 
+                                result += "<p>Type: " +  conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].type + "</p>";
+                                if (conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].type === 'break'|| conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].type === 'keynote') {
+                                    ; }
+                                else {
+                                var submissionKeys = Object.keys(conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].submissions);
+                                        result += "<details><summary>More info</summary>";
+                                        for(var l = 0; l < submissionKeys.length; l++){
+                                            result += "<div class='submissions'><p>Submission Title:" + conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].submissions[submissionKeys[l]].title + "</p>";
+                                            result += "<p><a href =" + conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].submissions[submissionKeys[l]].doiUrl + " target='_blank'>" + conferencedates[i].slots[slotKeys[j]].sessions[sessionKeys[k]].submissions[submissionKeys[l]].doiUrl + "</a><p/><br></div>";
+                                        }
+                                    
+                                    result += "</details></div>";
+                                        }
+                                    }
+                         }     }          
+                    }
+            }
+       document.getElementById("fullday").innerHTML = result;
+     }
+}
+ 
+    
+    
+    
+    
+
+/*    function to display radio buttons to filter data displayed    */       
+  
+function showRadioButtons(obj) {    
+    var result = ''
+        
+    result += "<input type='radio' id='paper' name='sessiontype' value='paper' onclick='paperOnly()'>" +
+    "<label for='paper'>Paper sessions only</label>" +
+    "<input type='radio' id='nonpaper' name='sessiontype' value='nonpaper' onclick='nonpaperOnly()'>" +
+    "<label for='nonpaper'>All non paper sessions</label>" +
+    "<input type='radio' id='all' name='sessiontype' value='all' onclick='allSessions()'>" +
+    "<label for='all'>All sessions</label>";
+     
+   document.getElementById("radiobuttons").innerHTML = result; 
+}
+   
+
+    
+    
+    
+/*    function to filter data and show paper sessions only    */      
+    
+function paperOnly() {
+      var sesh = document.getElementsByClassName("paper");
+        for (var i = 0; i < sesh.length; i++) {
+            document.getElementsByClassName("paper")[i].style.display = "block";    
+        }
+     
+     var seshtype = document.querySelectorAll('.workshop, .break, .DocConsortium, .keynote, .journals, .SIG, .panel, .course, .Awards, .altchi, .interactivity, .DC, .SC, .lbw, .casestudy, .Competition');
+        for (var i = 0; i < seshtype.length; i++) {
+            document.querySelectorAll('.workshop, .break, .DocConsortium, .keynote, .journals, .SIG, .panel, .course, .Awards, .altchi, .interactivity, .DC, .SC, .lbw, .casestudy, .Competition')[i].style.display = "none";    
+        } 
+  }    
+    
+    
+    
+    
+    
+/*    function to filter data and show non paper sessions only    */       
+    
+ function nonpaperOnly() { 
+     var sesh = document.getElementsByClassName("paper");
+        for (var i = 0; i < sesh.length; i++) {
+            document.getElementsByClassName("paper")[i].style.display = "none";    
+        }
+     
+     var seshtype = document.querySelectorAll('.workshop, .break, .DocConsortium, .keynote, .journals, .SIG, .panel, .course, .Awards, .altchi, .interactivity, .DC, .SC, .lbw, .casestudy, .Competition');
+        for (var i = 0; i < seshtype.length; i++) {
+            document.querySelectorAll('.workshop, .break, .DocConsortium, .keynote, .journals, .SIG, .panel, .course, .Awards, .altchi, .interactivity, .DC, .SC, .lbw, .casestudy, .Competition')[i].style.display = "block";    
+        } 
+ }
+
+    
+     
+
+    
+   
+/*    function to filter data and show all sessions    */     
+    
+ function allSessions() {
+     var seshtype = document.querySelectorAll('.workshop, .break, .DocConsortium, .keynote, .journals, .SIG, .panel, .course, .Awards, .altchi, .interactivity, .DC, .SC, .lbw, .casestudy, .Competition');
+        for (var i = 0; i < seshtype.length; i++) {
+            document.querySelectorAll('.workshop, .break, .DocConsortium, .keynote, .journals, .SIG, .panel, .course, .Awards, .altchi, .interactivity, .DC, .SC, .lbw, .casestudy, .Competition')[i].style.display = "block";    
+        }
+    
+      var sesh = document.getElementsByClassName("paper");
+        for (var i = 0; i < sesh.length; i++) {
+            document.getElementsByClassName("paper")[i].style.display = "block";    
+        } 
+  }
+    
+    
+    
+</script>      
+       <footer>
+          Copyright &copy; 2020 CHI   
+       </footer>     
+     </div>
+ </body>    
+</html>  
+
+
+
+
+<!--References:
+https://www.w3schools.com/html/html_form_elements.asp
+https://www.w3schools.com/tags/att_input_type_radio.asp
+-->

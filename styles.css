@@ -1,0 +1,111 @@
+        
+.container {
+    max-width: 1100px;
+    text-align: center;
+    margin: auto;
+    font-family: Palatino, sans-serif;
+    padding-bottom: 70px;
+}
+        
+header h1 {
+    font-size: 25px;
+    position: relative;
+    padding-top: 30px;
+    padding-bottom: 50px;  
+}
+        
+header img {
+    width: 100px;
+    float: left;   
+        }          
+        
+#dateselector {        
+    float: left;    
+    padding: 30px 30px 5px 30px;
+    margin-left: 200px; 
+    font-size: 13px;
+        }
+        
+#timeselector {
+   float:left ;
+   padding: 30px 30px 5px 30px; 
+   font-size: 13px;
+        }
+    
+          
+#submitbutton {
+    float: right;
+    padding: 30px 30px 5px 30px; 
+    margin-right: 200px;
+        }
+        
+.submitbutton {
+    font-size: 12px;
+    }
+        
+#radiobuttons {
+    clear:both;
+    padding: 10px;
+    font-size: 13px;
+        }
+        
+input[type="radio"]{
+  margin: 0 5px 0 30px;
+    }        
+        
+#paper {
+    padding: 20px;
+        }
+           
+h2 {
+    text-align: center;
+    padding: 0px;
+    font-size: 25px;
+    margin-bottom: 0px;
+    margin-top:70px;
+        }
+        
+h3 {        
+   text-align: left; 
+   background-image: linear-gradient(to right, #cc0000 ,orange, #cc0000);
+   color: white;
+   padding: 5px;
+   margin-bottom: 0px;
+   margin-top: 50px;
+        }
+        
+h4 {
+   text-align: left;
+   margin-bottom: 5px; 
+   margin-top: 25px;
+   text-decoration: underline;
+        }
+        
+p {
+    text-align: left;
+    font-size: 13px;
+    border: 0;
+    margin: 0;
+        }
+        
+summary {
+    font-size: 13px;
+    text-align: left;
+    margin-top: 5px;
+    margin-left: 15px;
+        }
+        
+.submissions {
+    margin-left: 85px;
+        }      
+        
+footer {
+    position:fixed;
+    left: 0;
+    bottom: 0px;
+    width: 100%;
+    font-size: 12px;
+    color: white;
+    background-color: darkgreen;
+    padding: 10px;
+}   
